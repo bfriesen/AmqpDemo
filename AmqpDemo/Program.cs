@@ -16,10 +16,13 @@ namespace AmqpDemo
             string receiverName = Console.ReadLine();
             Console.Write("Receiver address: ");
             string receiverAddress = Console.ReadLine();
+            Console.Write("Durable value: ");
+            uint durable = uint.Parse(Console.ReadLine());
 
             Connection connection = new Connection(new Address(queueUrl), null, null, OnConnectionOpened);
             Session session = new Session(connection);
-            ReceiverLink receiverLink = new ReceiverLink(session, receiverName, receiverAddress);
+            var source = new Source() { Address = receiverAddress, Durable = durable };
+            ReceiverLink receiverLink = new ReceiverLink(session, receiverName, source, null);
             receiverLink.Start(10, OnMessage);
             connection.AddClosedCallback(OnConnectionClosed);
 
